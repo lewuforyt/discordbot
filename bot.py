@@ -10,7 +10,8 @@ komutlar = [{"isim":"Ban", "kod":"ban", "aciklama":"Belirttiğiniz kişiyi banla
             {"isim":"Kaç sunucu ?", "kod":"kacsunucu", "aciklama":"Kaç sunucuda hizmet ettiğini söyler."},
             {"isim":"Yardım", "kod":"help", "aciklama":"Yardım komutudur. Komutların listesini söyler."},
             {"isim":"Kullanıcı Bilgisi", "kod":"user", "aciklama":"Kullanıcının bilgisini gösterir."},
-            {"isim":"Yapımcı", "kod":"admin", "aciklama":"Kısaca admin bilgisi"}]
+            {"isim":"Yapımcı", "kod":"admin", "aciklama":"Kısaca admin bilgisi"},
+           {"isim":"Sunucu bilgisi", "kod":"serverinfo", "aciklama":"Kısaca sunucu bilgisi"}]
 
 client.remove_command('help')
 
@@ -110,4 +111,47 @@ async def on_command_error(ctx, error):
         time.sleep(3)
         await msg.delete()
 
+@client.command()
+async def serverinfo(ctx):
+    name = str(ctx.guild.name)
+    description = str(ctx.guild.description)
+    owner = str(ctx.guild.owner)
+    id = str(ctx.guild.id)
+    region = str(ctx.guild.region)
+
+    icon = str(ctx.guild.icon_url)
+
+    embed = discord.Embed(
+        title=name,
+        description=f"Sunucu sahibi: {ctx.guild.owner.mention}",
+        color=discord.Color.blue()
+    )
+
+    dnd = 0
+    off = 0
+    on = 0
+    idle = 0
+
+    for _ in ctx.guild.members:
+        if str(_.status) == "dnd":
+            dnd+=1
+
+        if str(_.status) == "idle":
+            idle+=1
+
+        if str(_.status) == "offline":
+            off+=1
+
+        if str(_.status) == "online":
+            on+=1
+
+    embed.add_field(name=f"{len(ctx.guild.channels)} kanal bulunuyor.", value=f"**{len(ctx.guild.text_channels)}** Text Kanalı\n**{len(ctx.guild.voice_channels)}** Ses Kanalı\n**{len(ctx.guild.categories)}** Kategori", inline=True)
+    embed.add_field(name=f"{ctx.guild.member_count} Üye blunuyor.", value=f":green_circle: {on} Aktif\n:red_circle: {dnd} Rahatsız Etmeyin\n:yellow_circle: {idle} Boşta\n:white_circle: {off} Çevrimdışı", inline=True)
+    embed.add_field(name="Oluşturulma Tarihi", value=ctx.guild.created_at)
+    embed.set_thumbnail(url=ctx.guild.icon_url)
+    embed.set_footer(text=f"Sunucu id: {id}")
+
+
+    await ctx.send(embed=embed)
+                    
 client.run("token")
