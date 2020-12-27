@@ -115,6 +115,6 @@ selamlar = ["sa", "selam", "selamünaleyküm", "selamınaleyküm", "selamlar"]
 @client.event
 async def aleykumselambotu(ctx):
   if ctx.message in selamlar:
-    await ctx.send(f"Aleyküm Selam {ctx.author.mention}")
+    await ctx.send(f"Aleyküm Selam {ctx.author}")
                     
 client.run("token")
